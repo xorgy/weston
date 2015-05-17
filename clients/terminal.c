@@ -721,13 +721,16 @@ terminal_shift_line(struct terminal *terminal, int d)
 
 	if (d < 0) {
 		d = 0 - d;
-		memmove(&row[terminal->column],
-		        &row[terminal->column + d],
-			(terminal->width - terminal->column - d) * sizeof(union utf8_char));
-		memmove(&attr_row[terminal->column], &attr_row[terminal->column + d],
-		        (terminal->width - terminal->column - d) * sizeof(struct attr));
-		memset(&row[terminal->width - d], 0, d * sizeof(union utf8_char));
-		attr_init(&attr_row[terminal->width - d], terminal->curr_attr, d);
+
+		if(terminal->width - terminal->column) {
+			memmove(&row[terminal->column],
+				&row[terminal->column + d],
+				(terminal->width - terminal->column - d) * sizeof(union utf8_char));
+			memmove(&attr_row[terminal->column], &attr_row[terminal->column + d],
+				(terminal->width - terminal->column - d) * sizeof(struct attr));
+			memset(&row[terminal->width - d], 0, d * sizeof(union utf8_char));
+			attr_init(&attr_row[terminal->width - d], terminal->curr_attr, d);
+		}
 	} else {
 		memmove(&row[terminal->column + d], &row[terminal->column],
 			(terminal->width - terminal->column - d) * sizeof(union utf8_char));
